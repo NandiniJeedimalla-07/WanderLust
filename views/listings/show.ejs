@@ -14,6 +14,11 @@
        <li><%=data.location%></li>
        <li><%=data.country%></li>
     </ul>
-    
+    <form method="GET" action="/listing/<%=data.id%>/edit" >
+        <button> Edit </button>
+    </form>
+    <form method="POST" action="/listing/<%=data.id%>?_method=DELETE">
+        <button>Delete</button>
+    </form>
 </body>
 </html>

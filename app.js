@@ -3,10 +3,11 @@ const app=express();
 const mongoose=require("mongoose");
 const Listing=require("./MODELS/listing.js");
 const path=require("path");
+const methodOverride=require("method-override");
 app.set("views engine","ejs");
 app.set("views",path.join(__dirname,"views"));
 app.use(express.urlencoded({extended:true}));//It is middleware that allows Express to read data sent from an HTML form (POST request).
-
+app.use(methodOverride("_method"));
 
 async function  main(){
     await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust");
@@ -58,6 +59,26 @@ app.post("/listing",async (req,res)=>{
     let lis=new Listing(req.body.Listing);
      await lis.save()
      res.redirect("/listing");
+})
+//EDIT ROUTE(form)
+app.get("/listing/:id/edit", async (req, res) => {
+    let {id}=req.params;
+    const data= await Listing.findById(id);
+    res.render("./listings/edit.ejs",{data});
+
+});
+
+//UPDATE ROUTE
+app.put("/listing/:id",async(req,res)=>{
+     let {id}=req.params;
+      await Listing.findByIdAndUpdate(id, {...req.body.Listing});
+    res.redirect(`/listing/${id}`);
+})
+//DELETE ROUTE
+app.delete("/listing/:id",async(req,res)=>{
+    let {id}=req.params;
+    await Listing.findByIdAndDelete(id);
+    res.redirect("/listing");
 })
 
 app.listen(8080,()=>{
