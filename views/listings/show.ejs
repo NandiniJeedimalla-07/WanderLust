@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WanderLust</title>
-</head>
-<body>
+<% layout("/layouts/boilerplate") -%>
+
     <h2> Listing!</h2>
     <ul>
        <li><%=data.title%></li>
@@ -20,5 +14,3 @@
     <form method="POST" action="/listing/<%=data.id%>?_method=DELETE">
         <button>Delete</button>
     </form>
-</body>
-</html>

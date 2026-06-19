@@ -4,10 +4,16 @@ const mongoose=require("mongoose");
 const Listing=require("./MODELS/listing.js");
 const path=require("path");
 const methodOverride=require("method-override");
+const ejsMate=require("ejs-mate");
+
+
 app.set("views engine","ejs");
 app.set("views",path.join(__dirname,"views"));
 app.use(express.urlencoded({extended:true}));//It is middleware that allows Express to read data sent from an HTML form (POST request).
 app.use(methodOverride("_method"));
+app.engine('ejs', ejsMate);
+app.use(express.static(path.join(__dirname, "public")));
+
 
 async function  main(){
     await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust");
