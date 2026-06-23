@@ -1,19 +1,46 @@
 <% layout("/layouts/boilerplate") -%>
-
-    <h3>Edit your listing</h3>
+    <br>
+    <!-- <h3>Edit your listing</h3> -->
+     <div class="col-8 offset-2">
     <form method="POST" action="/listing/<%=data.id%>?_method=PUT">
-    <input name="Listing[title]" value="<%=data.title%>">
-    <br> <br><br>
+        <h3>Edit your listing</h3>
+        <div class="mb-3">
+         <label for="title" class="form-label">Title</label>
+         <input name="Listing[title]" value="<%=data.title%>" class="form-control">
+       </div>
 
-    <textarea  name="Listing[description]" ><%=data.description%></textarea> <br> <br><br>
-     <input name="Listing[price]" value="<%=data.price%>"><br> <br><br>
-     <input name="Listing[image]" value="<%=data.image%>"> <br> <br><br>
-    <input name="Listing[location]" value="<%=data.location%>"> <br> <br><br>
-    <input name="Listing[country]" value="<%=data.country%>">
+       <div  class="mb-3">
+        <label for="descritpion" class="form-label">Description</label>
+       <textarea  name="Listing[description]" class="form-control"><%=data.description%></textarea> 
+       </div>
 
+      <div  class="mb-3">
+        <label for="image" class="form-label">Image Link</label>
+     <input name="Listing[image]" value="<%=data.image%>" class="form-control"> 
+      </div>
+
+    <div class="row">
+       <div  class="mb-3 col-md-4">
+        <label for="price" class="form-label">Price</label>
+     <input name="Listing[price]" value="<%=data.price%>" class="form-control">
+      </div>
+
+      <div  class="mb-3 col-md-8">
+        <label for="location" class="form-label">Location</label>
+    <input name="Listing[location]" value="<%=data.location%>" class="form-control"> 
+     </div>
+     </div>
+
+    <div  class="mb-3">
+    <label for="country" class="form-label">Country</label>
+    <input name="Listing[country]" value="<%=data.country%>" class="form-control">
+    </div>
         
-    <button>Add</button>
+    <button class="edit-btn">Edit</button>
+ 
     </form>
+    </div>
+    <br>
       
 
     

@@ -1,16 +1,38 @@
 <% layout("/layouts/boilerplate") -%>
-
-    <h2> Listing!</h2>
-    <ul>
+<div class="row mt-3">
+    <div class="col-8 offset-2">
+        <h2>Listing Details</h2>
+        </div>
+          <!-- <h2><%=data.title%></h2> -->
+    <div class="card col-6 offset-2">
+     <img src="<%=data.image%>" class="card-img-top showimg " alt="listing img">
+     <div class="card-body">
+       <!-- <h5 class="card-title">Card title</h5> -->
+         <p><b><%=data.title%></b><br>
+          <%=data.description%><br>
+          &#8377;<%=data.price.toLocaleString("en-IN")%><br>
+       <%=data.location%><br>
+       <%=data.country%>
+         </p>
+      
+    </div>
+    </div>
+     <!-- <ul>
        <li><%=data.title%></li>
        <li><%=data.description%></li>
        <li><%=data.price%></li>
        <li><%=data.location%></li>
        <li><%=data.country%></li>
-    </ul>
-    <form method="GET" action="/listing/<%=data.id%>/edit" >
-        <button> Edit </button>
+    </ul> -->
+    </div>
+    <div class="btns d-flex  col-3 offset-2 gap-5">
+        <div class="btn1 ">
+    <form method="GET" action="/listing/<%=data.id%>/edit" > 
+        <button class="edit-btn rounded"> Edit </button>
     </form>
-    <form method="POST" action="/listing/<%=data.id%>?_method=DELETE">
-        <button>Delete</button>
+    </div>
+    <div class="btn2 ">    <form method="POST" action="/listing/<%=data.id%>?_method=DELETE">
+        <button class="del-btn rounded ">Delete</button>
     </form>
+    </div>
+    </div>
