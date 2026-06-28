@@ -7,7 +7,7 @@ const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
 
 
-app.set("views engine","ejs");
+app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
 app.use(express.urlencoded({extended:true}));//It is middleware that allows Express to read data sent from an HTML form (POST request).
 app.use(methodOverride("_method"));
@@ -46,6 +46,7 @@ app.get("/testlisting",async (req,res)=>{
 //INDEX ROUTE
 app.get("/listing", async (req,res)=>{
     let allListing=await Listing.find({});
+    console.log(allListing);
     res.render("./listings/index.ejs",{allListing});
 })
 
@@ -62,9 +63,14 @@ app.get("/listings/new",(req,res)=>{
 })
 //CREATE ROUTE
 app.post("/listing",async (req,res)=>{
-    let lis=new Listing(req.body.Listing);
+    try{
+         let lis=new Listing(req.body.Listing);
      await lis.save()
      res.redirect("/listing");
+    } catch(err){
+        next(err);
+    }
+    
 })
 //EDIT ROUTE(form)
 app.get("/listing/:id/edit", async (req, res) => {
@@ -86,6 +92,14 @@ app.delete("/listing/:id",async(req,res)=>{
     await Listing.findByIdAndDelete(id);
     res.redirect("/listing");
 })
+app.get("/deleteNullPrice", async (req, res) => {
+    const result = await Listing.deleteOne({ price: null });
+    res.send(result);
+});
+//ERROR HANDLING MIDDLEWARE
+app.use((err,req,res,next)=>{
+res.send("something went wrong");
+});
 
 app.listen(8080,()=>{
     console.log("server is working!")

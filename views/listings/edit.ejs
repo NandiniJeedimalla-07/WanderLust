@@ -2,16 +2,18 @@
     <br>
     <!-- <h3>Edit your listing</h3> -->
      <div class="col-8 offset-2">
-    <form method="POST" action="/listing/<%=data.id%>?_method=PUT">
+    <form method="POST" action="/listing/<%=data.id%>?_method=PUT"  class="needs-validation" novalidate>
         <h3>Edit your listing</h3>
         <div class="mb-3">
          <label for="title" class="form-label">Title</label>
-         <input name="Listing[title]" value="<%=data.title%>" class="form-control">
-       </div>
+         <input name="Listing[title]" value="<%=data.title%>" class="form-control" required>
+          <div class="invalid-feedback">please enter a valid title</div>
+     </div>
 
        <div  class="mb-3">
         <label for="descritpion" class="form-label">Description</label>
-       <textarea  name="Listing[description]" class="form-control"><%=data.description%></textarea> 
+       <textarea  name="Listing[description]" class="form-control" required><%=data.description%></textarea> 
+        <div class="invalid-feedback">Please enter a short description</div>
        </div>
 
       <div  class="mb-3">
@@ -22,18 +24,21 @@
     <div class="row">
        <div  class="mb-3 col-md-4">
         <label for="price" class="form-label">Price</label>
-     <input name="Listing[price]" value="<%=data.price%>" class="form-control">
+        <input name="Listing[price]" value="<%=data.price%>" class="form-control" required>
+        <div class="invalid-feedback">Please enter a valid price</div>
       </div>
 
       <div  class="mb-3 col-md-8">
         <label for="location" class="form-label">Location</label>
-    <input name="Listing[location]" value="<%=data.location%>" class="form-control"> 
-     </div>
+    <input name="Listing[location]" value="<%=data.location%>" class="form-control" required> 
+        <div class="invalid-feedback">Location should be a valid name</div>
+    </div>
      </div>
 
     <div  class="mb-3">
     <label for="country" class="form-label">Country</label>
-    <input name="Listing[country]" value="<%=data.country%>" class="form-control">
+    <input name="Listing[country]" value="<%=data.country%>" class="form-control" required>
+        <div class="invalid-feedback">Country name should be valid name </div>
     </div>
         
     <button class="edit-btn">Edit</button>

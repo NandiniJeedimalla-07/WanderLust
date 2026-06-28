@@ -3,21 +3,24 @@
     <% layout("/layouts/boilerplate") -%>
 
          <div class="col-8 offset-2">
-    <form method="POST" action="/listing">
+    <form method="POST" action="/listing" class="needs-validation" novalidate>
       <br>
 
       <h5>Create a new Listing</h5>
      <div class="mb-3">
         <label for="title" class="form-label">Title</label>
-        <input name="Listing[title]" placeholder="enter title" class="form-control">
+        <input name="Listing[title]" placeholder="enter title" class="form-control" required>
+        <div class="invalid-feedback">please enter a valid title</div>
      </div>
      <div class="mb-3">
         <label for="descritpion" class="form-label">Description</label>
-        <textarea  name="Listing[description]" class="form-control" ></textarea>  
+        <textarea  name="Listing[description]" class="form-control" required></textarea>  
+        <div class="invalid-feedback">Please enter a short description</div>
      </div>
     <div class="mb-3">
         <label for="price" class="form-label">Price</label>
-        <input name="Listing[price]" placeholder="enter price" class="form-control">
+        <input name="Listing[price]" placeholder="enter price" class="form-control" required >
+        <div class="invalid-feedback">Please enter a valid price</div>
     </div>
    <div class="mb-3">
         <label for="image" class="form-label">Image Link</label>
@@ -25,11 +28,13 @@
    </div>
     <div class="mb-3">
         <label for="location" class="form-label">Location</label>
-        <input name="Listing[location]" placeholder="enter location" class="form-control"> 
+        <input name="Listing[location]" placeholder="enter location" class="form-control" required> 
+        <div class="invalid-feedback">Location should be a valid name</div>
     </div>
     <div class="mb-3">
         <label for="country" class="form-label">Country</label>
-        <input name="Listing[country]" placeholder="enter country" class="form-control">
+        <input name="Listing[country]" placeholder="enter country" class="form-control" required >
+        <div class="invalid-feedback">Country name should be valid name </div>
     </div>
     
    <br>
