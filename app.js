@@ -46,6 +46,15 @@ app.get("/testlisting",async (req,res)=>{
 
 })
 
+const validateListing=(req,res,next)=>{
+    let {error}=listingSchema.validate(req.body);
+    if(error){
+        let errormsg=error.details.map((el)=>el.message).join(",");
+        throw new ExpressError(400,result.error);
+    }else
+    next();
+}
+
 //INDEX ROUTE
 app.get("/listing",wrapAsync(async (req,res)=>{
     let allListing=await Listing.find({});
@@ -65,7 +74,7 @@ app.get("/listings/new",(req,res)=>{
     res.render("./listings/newform.ejs");
 })
 //CREATE ROUTE
-app.post("/listing",wrapAsync(async (req,res)=>{
+app.post("/listing",validateListing,wrapAsync(async (req,res)=>{
     // if(!req.body.Listing){
     //     throw new ExpressError(400,"send valid data for listing");
     // }
@@ -86,7 +95,7 @@ app.get("/listing/:id/edit",wrapAsync( async (req, res) => {
 }));
 
 //UPDATE ROUTE
-app.put("/listing/:id",wrapAsync(async(req,res)=>{
+app.put("/listing/:id",validateListing,wrapAsync(async(req,res)=>{
      let {id}=req.params;
       await Listing.findByIdAndUpdate(id, {...req.body.Listing});
     res.redirect(`/listing/${id}`);
