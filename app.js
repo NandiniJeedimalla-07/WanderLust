@@ -8,6 +8,8 @@ const ejsMate=require("ejs-mate");
 const wrapAsync=require("./utils/wrapAsync.js");
 const ExpressError=require("./utils/ExpressError.js");
 const {listingSchema}=require("./schema.js");
+const Reviews=require("./MODELS/reviews.js");
+
 
 
 app.set("view engine","ejs");
@@ -106,6 +108,16 @@ app.delete("/listing/:id",wrapAsync(async(req,res)=>{
     await Listing.findByIdAndDelete(id);
     res.redirect("/listing");
 }));
+
+//POST ROUTE FOR REVIEWS
+app.post("/listing/:id/reviews" , async(req,res)=>{
+    let listing= await Listing.findById(req.params.id);
+    const newreview=new Reviews(req.body.reviews);
+    listing.reviews.push(newreview);
+    await newreview.save();
+    await listing.save();
+     res.send("review added successfully")
+})
 //* matches with any route .this gets called when none of the above gets matched 
 app.use((req,res,next)=>{
     next(new ExpressError(404,"Page Not Found"));
