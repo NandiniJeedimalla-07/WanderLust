@@ -7,7 +7,7 @@ const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
 const wrapAsync=require("./utils/wrapAsync.js");
 const ExpressError=require("./utils/ExpressError.js");
-const {listingSchema}=require("./schema.js");
+const {listingSchema,reviewSchema}=require("./schema.js");
 const Reviews=require("./MODELS/reviews.js");
 
 
@@ -52,7 +52,16 @@ const validateListing=(req,res,next)=>{
     let {error}=listingSchema.validate(req.body);
     if(error){
         let errormsg=error.details.map((el)=>el.message).join(",");
-        throw new ExpressError(400,result.error);
+        throw new ExpressError(400,errormsg);
+    }else
+    next();
+}
+
+const validateReviews=(req,res,next)=>{
+    let {error}=reviewSchema.validate(req.body);
+    if(error){
+        let errormsg=error.details.map((el)=>el.message).join(",");
+        throw new ExpressError(400,errormsg);
     }else
     next();
 }
@@ -67,7 +76,7 @@ app.get("/listing",wrapAsync(async (req,res)=>{
 //SHOW ROUTE
 app.get("/listing/:id" , wrapAsync(async(req,res)=>{
     let {id}=req.params;
-    const data= await Listing.findById(id);
+    const data= await Listing.findById(id).populate("reviews");
     console.log(data);
     res.render("./listings/show.ejs",{data});
 }));
@@ -110,14 +119,21 @@ app.delete("/listing/:id",wrapAsync(async(req,res)=>{
 }));
 
 //POST ROUTE FOR REVIEWS
-app.post("/listing/:id/reviews" , async(req,res)=>{
+app.post("/listing/:id/reviews" ,validateReviews, wrapAsync(async(req,res)=>{
     let listing= await Listing.findById(req.params.id);
     const newreview=new Reviews(req.body.reviews);
     listing.reviews.push(newreview);
     await newreview.save();
     await listing.save();
-     res.send("review added successfully")
-})
+    res.redirect(`/listing/${listing._id}`);
+}));
+//DELETE ROUTE FOR REVIEWS
+app.delete("/listing/:id/reviews/:reviewid",(wrapAsync(async(req,res)=>{
+     let {id,reviewid}=req.params;
+     await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewid}});
+     await Reviews.findByIdAndDelete(reviewid);
+     res.redirect(`/listing/${id}`)
+})))
 //* matches with any route .this gets called when none of the above gets matched 
 app.use((req,res,next)=>{
     next(new ExpressError(404,"Page Not Found"));

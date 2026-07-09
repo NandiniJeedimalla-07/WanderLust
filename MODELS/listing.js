@@ -1,5 +1,6 @@
 const mongoose=require("mongoose");
 const Schema=mongoose.Schema;
+const Reviews = require("./reviews.js");
 
 const listingschema=new Schema({
 
@@ -10,18 +11,23 @@ const listingschema=new Schema({
     description:String,
     image:{
         type:String,
-        default:"https://images.search.yahoo.com/search/images;_ylt=Awr1TezSVTJqcQIArpCJzbkF;_ylu=Y29sbwNzZzMEcG9zAzQEdnRpZAMEc2VjA3Ny?fr=mcafee&p=nature+images&imgurl=https%3A%2F%2Fpicjumbo.com%2Fwp-content%2Fuploads%2Fbeautiful-nature-scenery-free-photo-2210x1473.jpg",
-        set:(v)=> v===""?"https://images.search.yahoo.com/search/images;_ylt=Awr1TezSVTJqcQIArpCJzbkF;_ylu=Y29sbwNzZzMEcG9zAzQEdnRpZAMEc2VjA3Ny?fr=mcafee&p=nature+images&imgurl=https%3A%2F%2Fpicjumbo.com%2Fwp-content%2Fuploads%2Fbeautiful-nature-scenery-free-photo-2210x1473.jpg" : v
+        default: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200",
+        set:(v)=> v===""?"https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200" : v
     },
     price:Number,
     location:String,
     country:String,
     reviews:[
         {
-        type:Schema.Types.ObjectId,
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Reviews"
         }
     ]
 
+});
+
+listingschema.post("findOneAndDelete",async(Listing)=>{
+    await Reviews.deleteMany({_id: {$in:Listing.reviews}});
 });
 
 const Listing=mongoose.model("Listing",listingschema);
