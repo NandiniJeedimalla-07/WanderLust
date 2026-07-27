@@ -1,0 +1,22 @@
+
+
+
+<% if(success&&success.length) {%>
+<div class="alert alert-success col-6 offset-3" role="alert">
+    <%=success%>
+</div>
+<%}%>
+
+
+
+<!-- searching the deleted listing  -->
+ <!-- updating the deleted lisiting through url  -->
+
+<% if(error&&error.length) {%>
+<div class="alert alert-success col-6 offset-3" role="alert">
+    <%=error%>
+</div>
+<%}%>
+
+
+<!-- if we donot use if condition then we will see empty alert always but we want it only when listing is created so we use if conditiion  -->

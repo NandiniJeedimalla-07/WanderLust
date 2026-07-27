@@ -9,8 +9,10 @@ const wrapAsync=require("./utils/wrapAsync.js");
 const ExpressError=require("./utils/ExpressError.js");
 const {listingSchema,reviewSchema}=require("./schema.js");
 const Reviews=require("./MODELS/reviews.js");
-
-
+const listing=require("./classroom/routes/listing.js");
+const reviews=require("./classroom/routes/reviews.js");
+const sessions=require("express-session");
+const flash=require("connect-flash");
 
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
@@ -18,6 +20,30 @@ app.use(express.urlencoded({extended:true}));//It is middleware that allows Expr
 app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "public")));
+   
+
+const sessionOptions={
+    secret:"mysupersecret",
+    resave:false,
+    saveUninitialized:true,
+    cookie:{
+        expires:Date.now()+1000*60*60*24*3,
+        maxAge:1000*60*60*24*3,
+    }
+};
+
+app.use(sessions(sessionOptions));
+app.use(flash());
+
+app.use((req,res,next)=>{
+    res.locals.success=req.flash("success");
+    next();
+})
+
+app.use((req,res,next)=>{
+    res.locals.error=req.flash("error");
+    next();
+})
 
 
 async function  main(){
@@ -48,14 +74,14 @@ app.get("/testlisting",async (req,res)=>{
 
 })
 
-const validateListing=(req,res,next)=>{
+ const validateListing=(req,res,next)=>{
     let {error}=listingSchema.validate(req.body);
     if(error){
         let errormsg=error.details.map((el)=>el.message).join(",");
         throw new ExpressError(400,errormsg);
     }else
     next();
-}
+ }
 
 const validateReviews=(req,res,next)=>{
     let {error}=reviewSchema.validate(req.body);
@@ -65,75 +91,8 @@ const validateReviews=(req,res,next)=>{
     }else
     next();
 }
-
-//INDEX ROUTE
-app.get("/listing",wrapAsync(async (req,res)=>{
-    let allListing=await Listing.find({});
-    console.log(allListing);
-    res.render("./listings/index.ejs",{allListing});
-}));
-
-//SHOW ROUTE
-app.get("/listing/:id" , wrapAsync(async(req,res)=>{
-    let {id}=req.params;
-    const data= await Listing.findById(id).populate("reviews");
-    console.log(data);
-    res.render("./listings/show.ejs",{data});
-}));
-//NEW ROUTE
-app.get("/listings/new",(req,res)=>{
-    res.render("./listings/newform.ejs");
-})
-//CREATE ROUTE
-app.post("/listing",validateListing,wrapAsync(async (req,res)=>{
-    // if(!req.body.Listing){
-    //     throw new ExpressError(400,"send valid data for listing");
-    // }
-     let result=listingSchema.validate(req.body);
-     if(result.error){
-        throw new ExpressError(400,result.error);
-     }
-         let lis=new Listing(req.body.Listing);
-         await lis.save()
-         res.redirect("/listing");   
-}));
-//EDIT ROUTE(form)
-app.get("/listing/:id/edit",wrapAsync( async (req, res) => {
-    let {id}=req.params;
-    const data= await Listing.findById(id);
-    res.render("./listings/edit.ejs",{data});
-
-}));
-
-//UPDATE ROUTE
-app.put("/listing/:id",validateListing,wrapAsync(async(req,res)=>{
-     let {id}=req.params;
-      await Listing.findByIdAndUpdate(id, {...req.body.Listing});
-    res.redirect(`/listing/${id}`);
-}));
-//DELETE ROUTE
-app.delete("/listing/:id",wrapAsync(async(req,res)=>{
-    let {id}=req.params;
-    await Listing.findByIdAndDelete(id);
-    res.redirect("/listing");
-}));
-
-//POST ROUTE FOR REVIEWS
-app.post("/listing/:id/reviews" ,validateReviews, wrapAsync(async(req,res)=>{
-    let listing= await Listing.findById(req.params.id);
-    const newreview=new Reviews(req.body.reviews);
-    listing.reviews.push(newreview);
-    await newreview.save();
-    await listing.save();
-    res.redirect(`/listing/${listing._id}`);
-}));
-//DELETE ROUTE FOR REVIEWS
-app.delete("/listing/:id/reviews/:reviewid",(wrapAsync(async(req,res)=>{
-     let {id,reviewid}=req.params;
-     await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewid}});
-     await Reviews.findByIdAndDelete(reviewid);
-     res.redirect(`/listing/${id}`)
-})))
+app.use("/listing",listing);
+app.use("/listing/:id/reviews",reviews);
 //* matches with any route .this gets called when none of the above gets matched 
 app.use((req,res,next)=>{
     next(new ExpressError(404,"Page Not Found"));
