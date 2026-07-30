@@ -1,8 +1,8 @@
 const express=require("express");
 const router=express.Router({mergeParams:true});
-const {listingSchema,reviewSchema}=require("../../schema.js");
-const wrapAsync=require("../../utils/wrapAsync.js");
-const Listing=require("../../MODELS/listing.js");
+const {listingSchema,reviewSchema}=require("../schema.js");
+const wrapAsync=require("../utils/wrapAsync.js");
+const Listing=require("../MODELS/listing.js");
 
 
 const validateReviews=(req,res,next)=>{

@@ -9,10 +9,14 @@ const wrapAsync=require("./utils/wrapAsync.js");
 const ExpressError=require("./utils/ExpressError.js");
 const {listingSchema,reviewSchema}=require("./schema.js");
 const Reviews=require("./MODELS/reviews.js");
-const listing=require("./classroom/routes/listing.js");
-const reviews=require("./classroom/routes/reviews.js");
+const listing=require("./routes/listing.js");
+const reviews=require("./routes/reviews.js");
+const user=require("./routes/user.js")
 const sessions=require("express-session");
 const flash=require("connect-flash");
+const passport=require("passport");
+const localstrategy=require("passport-local");
+const User=require("./MODELS/user.js");
 
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
@@ -34,6 +38,13 @@ const sessionOptions={
 
 app.use(sessions(sessionOptions));
 app.use(flash());
+//middleware that initializes passport
+app.use(passport.initialize());
+//a web application neeeds the ability to identify users as they browse form page to page.This series of requests and responses, each associated wtiht the same user, is known as session . 
+app.use(passport.session());
+passport.use(new localstrategy(User.authenticate()))
+passport.serializeUser(User.authenticate());
+passport.deserializeUser(User.deserializeUser());
 
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success");
@@ -91,8 +102,19 @@ const validateReviews=(req,res,next)=>{
     }else
     next();
 }
+
+ app.get("/demoUser",async(req,res)=>{
+    let fakeuser=new User({
+        email:"student@gmail.com",
+        username:"student"
+    })
+    let registereduser=await User.register(fakeuser,"helloworld")//helloworld is password here 
+     res.send(registeredUser);
+})
+
 app.use("/listing",listing);
 app.use("/listing/:id/reviews",reviews);
+app.use("/",user);
 //* matches with any route .this gets called when none of the above gets matched 
 app.use((req,res,next)=>{
     next(new ExpressError(404,"Page Not Found"));
