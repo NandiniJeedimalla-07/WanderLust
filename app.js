@@ -109,6 +109,8 @@ const validateReviews=(req,res,next)=>{
 app.use("/listing",listing);
 app.use("/listing/:id/reviews",reviews);
 app.use("/",user);
+
+
 //* matches with any route .this gets called when none of the above gets matched 
 app.use((req,res,next)=>{
     next(new ExpressError(404,"Page Not Found"));

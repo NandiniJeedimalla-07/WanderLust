@@ -4,48 +4,22 @@ const User=require("../MODELS/user.js");
 const wrapAsync=require("../utils/wrapAsync");
 const passport=require("passport");
 
-router.get("/signup",(req,res)=>{
-    // res.send("form");
-    res.render("users/signup.ejs");
-})
+const controllerUser=require("../controllers/user.js");
+
+router.get("/logout",controllerUser.getlogout);
+
+
+router
+.route("/signup")
+.get(controllerUser.getsignup)
 //If we donot use try-catch block and use only async(req,res) then error msg is displayed in a rabdom blank page with header and footer.But we want error to be dispalyed as msg and again see signup, for this we use try-catch block 
-router.post("/signup",async(req,res)=>{
-    try{
-    let {email,username,password}=req.body;
-    const newUser=new User({email,username});
-    const register=await User.register(newUser,password);
-    req.login(register,(err)=>{
-        if(err)
-          return next(err);
-    })
-    req.flash("success","Welcome to WanderLust! ");
-    res.redirect("/listing");
-    }catch(e){
-      req.flash("error",e.message);
-      res.redirect("/signup");
-    }
-})
+.post(controllerUser.postsignup);
 
-router.get("/login",async(req,res)=>{
-    res.render("users/login.ejs");
-})
-
-router.get("/logout",(req,res,next)=>{
-    req.logout((err)=>{
-        if(err){
-            next(err);
-        }
-        req.flash("success","you are logged out!");
-        res.redirect("/listing")
-    })
-})
-
-
-
-
+router
+.route("/login")
+.get(controllerUser.getlogin)
 //The authentication i.e. whether the user already exists or not is done my passport .And passport does this work as middleware ,so we will include a middleware in the post requresst
-
-router.post("/login",passport.authenticate("local",{failureRedirect: '/login' ,failureFlash:true}),async(req,res)=>{
+.post(passport.authenticate("local",{failureRedirect: '/login' ,failureFlash:true}),async(req,res)=>{
  req.flash("success","Welcome to Wanderlust! You are logged in!")
  res.redirect("/listing")
 } )
