@@ -5,10 +5,10 @@
         </div>
           <!-- <h2><%=data.title%></h2> -->
     <div class="card col-6 offset-2">
-     <img src="<%=data.image%>" class="card-img-top showimg " alt="listing img">
+     <img src="<%=data.image%>" class="card-img-top showimg" alt="listing img">
      <div class="card-body">
        <!-- <h5 class="card-title">Card title</h5> -->
-         <p><b><%=data.title%></b><br>
+         <p>Owner:<i><%=data.owner.username%></i></b><br>
           <%=data.description%><br>
           &#8377;<%=data.price.toLocaleString("en-IN")%><br>
        <%=data.location%><br>
@@ -25,6 +25,7 @@
        <li><%=data.country%></li>
     </ul> -->
     </div>
+    <% if(currUser && currUser._id.equals(data.owner._id)) { %>
     <div class="btns d-flex  col-3 offset-2 gap-5">
         <div class="btn1 mt-3">
     <form method="GET" action="/listing/<%=data.id%>/edit" > 
@@ -36,9 +37,12 @@
     </form>
     </div>
     </div>
-<div class="row mt-3">
+    <% } %>
+<div class="row mt-3">  
   <div class="col-8 offset-2">
     <hr>
+
+  <% if(currUser){%>
 <form action="/listing/<%=data.id%>/reviews" method="POST" novalidate class="needs-validation">
 <div class="mt-3 mb-3">
     <h4> Leave a Review</h4>
@@ -52,6 +56,7 @@
     <button class="btn btn-outline-dark">submit</button>
 </div>
 </form>
+<% } %>
 </div>
 <div class="col-8 offset-2">
 <hr>
@@ -60,7 +65,7 @@
 <%for(let review of data.reviews){%>
 <div class="card mt-3 mb-3 col-5 ms-3"  >
   <div class="card-body ">
-    <h6 class="card-title">Nakshatra</h6>
+    <h6 class="card-title">@<%=review.author. username%></h6>
     <p class="card-text"> <%=review.comment%> </p>
      <p><%=review.rating%></p> 
   </div>

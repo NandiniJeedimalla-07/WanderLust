@@ -17,7 +17,6 @@ const flash=require("connect-flash");
 const passport=require("passport");
 const localstrategy=require("passport-local");
 const User=require("./MODELS/user.js");
-
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
 app.use(express.urlencoded({extended:true}));//It is middleware that allows Express to read data sent from an HTML form (POST request).
@@ -43,20 +42,15 @@ app.use(passport.initialize());
 //a web application neeeds the ability to identify users as they browse form page to page.This series of requests and responses, each associated wtiht the same user, is known as session . 
 app.use(passport.session());
 passport.use(new localstrategy(User.authenticate()))
-passport.serializeUser(User.authenticate());
+passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success");
-    next();
-})
-
-app.use((req,res,next)=>{
     res.locals.error=req.flash("error");
+    res.locals.currUser=req.user;
     next();
 })
-
-
 async function  main(){
     await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust");
 }

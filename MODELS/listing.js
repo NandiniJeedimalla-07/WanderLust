@@ -1,6 +1,6 @@
 const mongoose=require("mongoose");
 const Schema=mongoose.Schema;
-const Reviews = require("./reviews.js");
+const reviews = require("./reviews.js");
 
 const listingschema=new Schema({
 
@@ -22,12 +22,16 @@ const listingschema=new Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Reviews"
         }
-    ]
+    ],
+    owner:{
+        type:Schema.Types.ObjectId,
+        ref:"User"
+    }
 
 });
 
 listingschema.post("findOneAndDelete",async(Listing)=>{
-    await Reviews.deleteMany({_id: {$in:Listing.reviews}});
+    await reviews.deleteMany({_id: {$in:Listing.reviews}});
 });
 
 const Listing=mongoose.model("Listing",listingschema);
