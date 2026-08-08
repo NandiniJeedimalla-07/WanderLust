@@ -29,12 +29,15 @@ module.exports.create=async (req,res)=>{
     // if(!req.body.Listing){
     //     throw new ExpressError(400,"send valid data for listing");
     // }
-     let result=listingSchema.validate(req.body);
-     if(result.error){
-        throw new ExpressError(400,result.error);
-     }
+    let url=req.file.path;
+    let filename=req.file.filename;
+    //  let result=listingSchema.validate(req.body);
+    //  if(result.error){
+    //     throw new ExpressError(400,result.error);
+    //  }
          let lis=new Listing(req.body.Listing);
          lis.owner=req.user._id;
+         lis.image={url,filename};
          await lis.save();
          req.flash("success","New Listing created !")
         res.redirect("/listing")  

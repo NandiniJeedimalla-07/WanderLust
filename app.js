@@ -1,3 +1,12 @@
+
+//we use .env file only in development phase and not in production phase as it contains important information
+if(process.env.NODE_ENV!="production"){
+require("dotenv").config();
+}
+console.log(process.env.SECRET);
+
+
+
 const express=require("express");
 const app=express();
 const mongoose=require("mongoose");
@@ -17,6 +26,12 @@ const flash=require("connect-flash");
 const passport=require("passport");
 const localstrategy=require("passport-local");
 const User=require("./MODELS/user.js");
+const multer=require('multer');//requiring multer
+const upload=multer({data:'uploads/'}) //this says where to store the uploaded files coming from form 
+
+
+// since our form return multipart data we install multer 
+//multer is node.js middleware for handling multipart/form-data
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
 app.use(express.urlencoded({extended:true}));//It is middleware that allows Express to read data sent from an HTML form (POST request).
