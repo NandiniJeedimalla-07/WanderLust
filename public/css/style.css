@@ -97,3 +97,12 @@ a{
 .btns{
     display:flex;
 }
+.image{
+    height:300px;
+    width:300px;
+}
+#map {
+    height: 400px;
+    width: 100%;
+    margin-bottom: 50px;
+}

@@ -1,40 +1,61 @@
-const mongoose=require("mongoose");
-const Schema=mongoose.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const reviews = require("./reviews.js");
 
-const listingschema=new Schema({
+const listingschema = new Schema({
 
-    title:{
+    title: {
+        type: String,
+        required: true
+    },
+
+    description: String,
+
+    image: {
+        url: String,
+        filename: String,
+    },
+
+    price: Number,
+    location: String,
+    country: String,
+
+    // ADD THIS
+    geometry: {
+        type: {
+            type: String,
+            enum: ["Point"],
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            required: true
+        }
+    },
+
+    category:{
         type:String,
-        required:true
+        enum:["mountains","farms","arctic","deserts","boats"]
     },
-    description:String,
-    image:{
-        // type:String,
-        // default: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200",
-        // set:(v)=> v===""?"https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200" : v
-        url:String,
-        filename:String,
-    },
-    price:Number,
-    location:String,
-    country:String,
-    reviews:[
+
+    reviews: [
         {
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Reviews"
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Reviews"
         }
     ],
-    owner:{
-        type:Schema.Types.ObjectId,
-        ref:"User"
+
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
     }
-
 });
 
-listingschema.post("findOneAndDelete",async(Listing)=>{
-    await reviews.deleteMany({_id: {$in:Listing.reviews}});
+listingschema.post("findOneAndDelete", async (Listing) => {
+    await reviews.deleteMany({
+        _id: { $in: Listing.reviews }
+    });
 });
 
-const Listing=mongoose.model("Listing",listingschema);
-module.exports=Listing;
+const Listing = mongoose.model("Listing", listingschema);
+module.exports = Listing;
