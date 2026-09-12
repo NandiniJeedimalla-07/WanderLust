@@ -5,7 +5,7 @@ const wrapAsync=require("../utils/wrapAsync.js");
 const Listing=require("../MODELS/listing.js");
 const Reviews=require("../MODELS/reviews.js");
 const ExpressError = require("../utils/ExpressError.js");
-const { isLoggedIn } = require("../middleware.js");
+const { isLoggedIn } = require("../middlewares.js");
 
 const validateReviews=(req,res,next)=>{
     let {error}=reviewSchema.validate(req.body);
