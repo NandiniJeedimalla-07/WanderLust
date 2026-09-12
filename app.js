@@ -38,10 +38,10 @@ const upload=multer({data:'uploads/'}) //this says where to store the uploaded f
 const dbUrl=process.env.ATLASDB_URL;
 
 // since our form return multipart data we install multer 
-//multer is node.js middleware for handling multipart/form-data
+//multer is node.js middlewaressssssssssss for handling multipart/form-data
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
-app.use(express.urlencoded({extended:true}));//It is middleware that allows Express to read data sent from an HTML form (POST request).
+app.use(express.urlencoded({extended:true}));//It is middlewaressssssssssss that allows Express to read data sent from an HTML form (POST request).
 app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "public")));
@@ -74,7 +74,7 @@ const sessionOptions={
 
  app.use(sessions(sessionOptions));
 app.use(flash());
-//middleware that initializes passport
+//middlewaressssssssssss that initializes passport
 app.use(passport.initialize());
 //a web application neeeds the ability to identify users as they browse form page to page.This series of requests and responses, each associated wtiht the same user, is known as session . 
 app.use(passport.session());
