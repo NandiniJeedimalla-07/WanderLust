@@ -3,7 +3,11 @@
 if(process.env.NODE_ENV!="production"){
 require("dotenv").config();
 }
-console.log(process.env.SECRET);
+
+// if (!process.env.ATLASDB_URL) {
+//     console.error("ERROR: ATLASDB_URL is not defined in your environment variables!");
+// }
+// console.log(process.env.SECRET);
 
 
 
@@ -22,6 +26,7 @@ const listing=require("./routes/listing.js");
 const reviews=require("./routes/reviews.js");
 const user=require("./routes/user.js")
 const sessions=require("express-session");
+const {MongoStore} = require("connect-mongo");
 const flash=require("connect-flash");
 const passport=require("passport");
 const localstrategy=require("passport-local");
@@ -29,6 +34,8 @@ const User=require("./MODELS/user.js");
 const multer=require('multer');//requiring multer
 const upload=multer({data:'uploads/'}) //this says where to store the uploaded files coming from form 
 
+
+const dbUrl=process.env.ATLASDB_URL;
 
 // since our form return multipart data we install multer 
 //multer is node.js middleware for handling multipart/form-data
@@ -38,10 +45,24 @@ app.use(express.urlencoded({extended:true}));//It is middleware that allows Expr
 app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "public")));
-   
+
+console.log("MongoStore type:", MongoStore);
+
+const store=MongoStore.create({
+    mongoUrl:dbUrl,
+    crypto:{
+        secret:process.env.SESSION_SECRET
+    },
+    touchAfter:24*3600,
+})
+
+store.on("error",(err)=>{
+    console.log("ERROR in MONGO SESSION STORE",err);
+})
 
 const sessionOptions={
-    secret:"mysupersecret",
+    store:store,
+    secret:process.env.SESSION_SECRET,
     resave:false,
     saveUninitialized:true,
     cookie:{
@@ -50,7 +71,8 @@ const sessionOptions={
     }
 };
 
-app.use(sessions(sessionOptions));
+
+ app.use(sessions(sessionOptions));
 app.use(flash());
 //middleware that initializes passport
 app.use(passport.initialize());
@@ -60,6 +82,7 @@ passport.use(new localstrategy(User.authenticate()))
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success");
     res.locals.error=req.flash("error");
@@ -67,7 +90,8 @@ app.use((req,res,next)=>{
     next();
 })
 async function  main(){
-    await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust");
+    await mongoose.connect(dbUrl);
+    console.log("connected to ATLAS!")
 }
 main().then(()=>{
     console.log("connected to DB!");
@@ -85,7 +109,11 @@ app.get("/testlisting",async (req,res)=>{
         description:"Beach view",
         price:2000,
         location: "Lakshmipuram ,guntur",
-        country:"India"
+        country:"India",
+        geometry: {
+            type: "Point",
+         coordinates: [80.6480, 16.3067]
+         }
     });
 
     await samplelisting.save();
@@ -140,6 +168,8 @@ app.use((err,req,res,next)=>{
   //  res.status(statusCode).send(message);
 });
 
-app.listen(8080,()=>{
-    console.log("server is working!")
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+    console.log(`Server is working on port ${PORT}`);
 });

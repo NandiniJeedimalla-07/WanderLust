@@ -33,10 +33,20 @@ const listingschema = new Schema({
         }
     },
 
-    category:{
-        type:String,
-        enum:["mountains","farms","arctic","deserts","boats"]
-    },
+    ccategory: {
+    type: String,
+    enum: [
+        "mountains",
+        "snow",
+        "tropical",
+        "farms",
+        "boats",
+        "deserts",
+        "cities",
+        "forest",
+        "wildlife"
+    ]
+},
 
     reviews: [
         {

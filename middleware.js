@@ -1,5 +1,5 @@
 const Listing=require("./MODELS/listing.js");
-const Review=require("./MODELS/reviews.js");
+const Reviews=require("./MODELS/reviews.js");
 const {listingSchema,reviewSchema}=require("./schema.js");
 const ExpressError=require("./utils/ExpressError.js");
 
@@ -41,7 +41,7 @@ module.exports.isOwner=async(req,res,next)=>{
 
  module.exports.isAuthor=async(req,res,next)=>{
     let {id,reviewid}=req.params;
-    let review =await Review.findById(reviewid);
+    let review =await Reviews.findById(reviewid);
     if(review.author&&!review.author.equals(res.locals.currUser._id)){
         req.flash("error","You are not the author of this review!");
         return res.redirect(`/listing/${id}`);

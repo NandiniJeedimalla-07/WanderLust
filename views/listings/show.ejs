@@ -8,7 +8,7 @@
      <img src="<%=data.image.url%>" class="card-img-top showimg" alt="listing img">
      <div class="card-body">
        <!-- <h5 class="card-title">Card title</h5> -->
-         <p>Owner:<i><%=data.owner.username%></i></b><br>
+         <p>Owner:<i><%= data.owner ? data.owner.username : "WanderLust" %></i></b><br>
           <%=data.description%><br>
           &#8377;<%=data.price.toLocaleString("en-IN")%>/night<br>
           <i>+18% GST</i>
@@ -26,8 +26,7 @@
        <li><%=data.country%></li>
     </ul> -->
     </div>
-    <% if(currUser && currUser._id.equals(data.owner._id)) { %>
-    <div class="btns d-flex  col-3 offset-2 gap-5">
+<% if(currUser && data.owner && currUser._id.equals(data.owner._id)) { %>    <div class="btns d-flex  col-3 offset-2 gap-5">
         <div class="btn1 mt-3">
     <form method="GET" action="/listing/<%=data.id%>/edit" > 
         <button class="edit-btn rounded"> Edit </button>
@@ -109,9 +108,9 @@
    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-    const latitude = <%= data.geometry.coordinates[1] %>;
-    const longitude = <%= data.geometry.coordinates[0] %>;
-
+    const coordinates = <%- JSON.stringify(data.geometry.coordinates) %>;
+    const longitude = coordinates[0];
+    const latitude = coordinates[1];
     const map = L.map("map").setView([latitude, longitude], 13);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
