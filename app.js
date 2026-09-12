@@ -99,9 +99,9 @@ main().then(()=>{
     console.log(err)});
 
 
-app.get("/",(req,res)=>{
-    res.send("Hi,this is root!");
-})
+app.get("/", (req, res) => {
+    res.redirect("/listing");
+});
 
 app.get("/testlisting",async (req,res)=>{
     let samplelisting=new Listing({
