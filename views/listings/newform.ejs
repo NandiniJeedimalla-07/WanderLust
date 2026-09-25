@@ -36,6 +36,27 @@
         <input name="Listing[country]" placeholder="enter country" class="form-control" required >
         <div class="invalid-feedback">Country name should be valid name </div>
     </div>
+    <div class="mb-3">
+    <label for="category" class="form-label">Category</label>
+
+    <select
+        name="Listing[category]"
+        id="category"
+        class="form-select"
+        required
+    >
+        <option value="">Select Category</option>
+        <option value="mountains">Mountains</option>
+        <option value="snow">Snow</option>
+        <option value="tropical">Tropical</option>
+        <option value="farms">Farms</option>
+        <option value="boats">Boats</option>
+        <option value="deserts">Deserts</option>
+        <option value="cities">Cities</option>
+        <option value="forest">Forest</option>
+        <option value="wildlife">Wildlife</option>
+    </select>
+</div>
     
    <br>
    <button class="btn btn-dark add-btn">Add</button>

@@ -1,10 +1,21 @@
 const Listing=require("../MODELS/listing.js")
 
-module.exports.index=async (req,res)=>{
-    let allListing=await Listing.find({});
-    console.log(allListing);
-    res.render("./listings/index.ejs",{allListing});
-}
+module.exports.index = async (req, res) => {
+    const { category } = req.query;
+
+    let allListing;
+
+    if (category) {
+        allListing = await Listing.find({ category });
+    } else {
+        allListing = await Listing.find({});
+    }
+
+    console.log("CATEGORY:", category);
+    console.log("LISTINGS FOUND:", allListing.length);
+
+    res.render("./listings/index.ejs", { allListing });
+};
 
 module.exports.newform=(req,res)=>{
     res.render("./listings/newform.ejs");

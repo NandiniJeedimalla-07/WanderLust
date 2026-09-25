@@ -162,6 +162,7 @@ app.get("/deleteNullPrice", async (req, res) => {
     const result = await Listing.deleteOne({ price: null });
     res.send(result);
 });
+
 app.use((err,req,res,next)=>{
     let {statusCode=500,message="Something went wrong"}=err;
     res.render("listings/error.ejs",{message});

@@ -19,21 +19,61 @@ const validateReviews=(req,res,next)=>{
 //POST ROUTE FOR REVIEWS
 router.post("/" ,isLoggedIn,validateReviews, wrapAsync(async(req,res)=>{
     let listing= await Listing.findById(req.params.id);
+    if(!listing){
+        req.flash("error","Listing you requested does not exist!");
+        return res.redirect("/listing");
+    }
+
     const newreview=new Reviews(req.body.reviews);
     newreview.author = req.user._id
-    listing.reviews.push(newreview);
     await newreview.save();
-    await listing.save();
+
+    const updatedListing = await Listing.findByIdAndUpdate(
+        listing._id,
+        { $push: { reviews: newreview._id } },
+        { runValidators: true }
+    );
+
+    if(!updatedListing){
+        await Reviews.findByIdAndDelete(newreview._id);
+        throw new ExpressError(500,"Could not save the review to this listing.");
+    }
+
     req.flash("success","New review created!");
     res.redirect(`/listing/${listing._id}`);
 }));
 //DELETE ROUTE FOR REVIEWS
-router.delete("/:reviewid",isLoggedIn,(wrapAsync(async(req,res)=>{
-     let {id,reviewid}=req.params;
-     await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewid}});
-     await Reviews.findByIdAndDelete(reviewid);
-     res.flash("success","Review deleted successfully!")
-     res.redirect(`/listing/${id}`)
-})))
+router.delete(
+    "/:reviewid",
+    isLoggedIn,
+    wrapAsync(async (req, res) => {
+
+        const { id, reviewid } = req.params;
+
+        const review = await Reviews.findById(reviewid);
+
+        if (!review) {
+            req.flash("error", "Review not found!");
+            return res.redirect(`/listing/${id}`);
+        }
+
+        // Check whether the logged-in user owns this review
+        if (!review.author.equals(req.user._id)) {
+            req.flash("error", "You are not authorized to delete this review!");
+            return res.redirect(`/listing/${id}`);
+        }
+
+        await Listing.findByIdAndUpdate(
+            id,
+            { $pull: { reviews: reviewid } }
+        );
+
+        await Reviews.findByIdAndDelete(reviewid);
+
+        req.flash("success", "Review deleted successfully!");
+
+        res.redirect(`/listing/${id}`);
+    })
+);
 
 module.exports=router;

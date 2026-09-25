@@ -33,7 +33,7 @@ const listingschema = new Schema({
         }
     },
 
-    ccategory: {
+    category: {
     type: String,
     enum: [
         "mountains",

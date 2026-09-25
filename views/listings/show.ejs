@@ -80,18 +80,43 @@
 <p><b>All Reviews</b></p>
 <div class="row">
 <%for(let review of data.reviews){%>
-<div class="card mt-3 mb-3 col-5 ms-3"  >
-  <div class="card-body ">
-    <h6 class="card-title">@<%=review.author. username%></h6>
-    <p class="starability-result card-text" data-rating="<%=review.rating%>">Rated: <%=review.rating%>stars</p>
-    <p class="card-text"> <%=review.comment%> </p>
 
-  </div>
-  <form class="mb-3" method="POST" action="/listing/<%=data.id%>/reviews/<%=review._id%>?_method=DELETE">
-    <button class="btn btn-sm btn-dark">Delete</button>
-  </form>
+<div class="card mt-3 mb-3 col-5 ms-3">
+
+    <div class="card-body">
+
+        <h6 class="card-title">
+            @<%=review.author.username%>
+        </h6>
+
+        <p class="starability-result card-text"
+           data-rating="<%=review.rating%>">
+            Rated: <%=review.rating%> stars
+        </p>
+
+        <p class="card-text">
+            <%=review.comment%>
+        </p>
+
+    </div>
+
+    <% if (currUser && review.author && review.author._id.equals(currUser._id)) { %>
+
+        <form class="mb-3"
+              method="POST"
+              action="/listing/<%=data.id%>/reviews/<%=review._id%>?_method=DELETE">
+
+            <button class="btn btn-sm btn-dark">
+                Delete
+            </button>
+
+        </form>
+
+    <% } %>
+
 </div>
- <%}%>
+
+<%}%>
  </div>
  </div>
 <%}%>
@@ -102,25 +127,31 @@
 <div class="col-8 offset-2">
  <div class="mt-4">
     <h3>Where you'll be</h3>
-    <div id="map"></div>
+    <div id="map" data-coordinates='<%= data.geometry ? JSON.stringify(data.geometry.coordinates) : "" %>'></div>
     </div>
 
    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-    const coordinates = <%- JSON.stringify(data.geometry.coordinates) %>;
-    const longitude = coordinates[0];
-    const latitude = coordinates[1];
-    const map = L.map("map").setView([latitude, longitude], 13);
+    const mapElement = document.getElementById("map");
+    const coordinates = mapElement.dataset.coordinates
+        ? JSON.parse(mapElement.dataset.coordinates)
+        : null;
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors"
-    }).addTo(map);
+    if (coordinates && coordinates.length >= 2) {
+        const longitude = coordinates[0];
+        const latitude = coordinates[1];
+        const map = L.map(mapElement).setView([latitude, longitude], 13);
 
-      L.marker([latitude, longitude])
-        .addTo(map)
-        .bindPopup("<%= data.title %>")
-        .openPopup();
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "&copy; OpenStreetMap contributors"
+        }).addTo(map);
+
+        L.marker([latitude, longitude])
+            .addTo(map)
+            .bindPopup("<%= data.title %>")
+            .openPopup();
+    }
      </script>
  </div>
  </div>
